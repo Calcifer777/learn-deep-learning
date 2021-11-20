@@ -1,0 +1,9 @@
+jupyterlab
+jupyter-contrib-nbextensions
+ipywidgets
+# matplotlib
+numpy
+pandas
+tensorflow
+tensorflow-datasets
+# tensorflow-data-validation

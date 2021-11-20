@@ -1,0 +1,6 @@
+[submodule "introtodeeplearning"]
+	path = introtodeeplearning
+	url = git@github.com:aamini/introtodeeplearning.git
+[submodule "LDL"]
+	path = LDL
+	url = git@github.com:NVDLI/LDL.git
