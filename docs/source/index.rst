@@ -11,6 +11,10 @@ Welcome to Flink Notes!
   :caption: Contents:
 
   introduction.md
+  basics.md
+  hyperparameter-tuning.md
+  cnn.md
+  transfer-learning.md
   resources.md
 
 
