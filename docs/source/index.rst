@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Flink Notes!
+Deep Learning Notes
 ======================================
 
 .. toctree::
@@ -14,6 +14,7 @@ Welcome to Flink Notes!
   basics.md
   hyperparameter-tuning.md
   cnn.md
+  rnn.md
   transfer-learning.md
   resources.md
 

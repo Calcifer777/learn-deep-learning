@@ -40,8 +40,7 @@ Translation invariance is achieved by employing weight sharing between neurons a
 Sparse connections imply fewer computations per neuron (because each neuron is not connected to all neurons in the preceding layer). 
 
 Weight sharing implies fewer unique, but not fewer total, weights per layer. The number of unique weights in a convolutional layer is given by: 
-```math
-num_channels_in * kernel_size * num_channels_out
-```
+
+$num\\,channels\\,in\\, * \\, kernel\\,size \\, * \\, num\\,channels\\,out$
 
 Therefore, the benefit of using a convolutional layer in terms of reducing the number of weights is not as significant for the layers deep into the network. The reasons for these effects are the following: The width and the height of the layers tend to decrease deeper into the network, which reduces the number of weights for a fully connected subsequent layer but does not affect a convolutional layer. Further, layers deep inside the network often have many more channels than the three color channels from the input image

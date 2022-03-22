@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Flink Notes'
+project = 'Deep Learning Notes'
 copyright = '2022, Marco Filippone'
 author = 'Marco Filippone'
 
@@ -32,8 +32,17 @@ release = '0.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-  'myst_parser'
+  'myst_parser',
+  'sphinx_math_dollar', 
+  'sphinx.ext.mathjax',
 ]
+
+mathjax_config = {
+  'tex2jax': {
+    'inlineMath': [ ["\\(","\\)"] ],
+    'displayMath': [["\\[","\\]"] ],
+  },
+}
 
 source_suffix = [
   '.rst',
@@ -55,7 +64,9 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 # html_theme = 'alabaster'
-html_theme = 'sphinx_rtd_theme'
+# html_theme = 'sphinx_rtd_theme'
+# html_theme = 'sphinx_material'
+html_theme = 'karma_sphinx_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
