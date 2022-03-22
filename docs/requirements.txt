@@ -2,4 +2,4 @@ Sphinx==4.4.0
 sphinx-math-dollar==1.2
 myst-parser==0.17.0
 # sphinx-rtd-theme==1.0.0
-sphinx-karma-theme==0.0.8
+karma-sphinx-theme==0.0.8
