@@ -17,6 +17,7 @@ Deep Learning Notes
   rnn.md
   transfer-learning.md
   performance-evaluation.md
+  nlp.md
   resources.md
 
 
