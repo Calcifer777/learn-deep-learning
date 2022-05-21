@@ -4,3 +4,6 @@
 [submodule "LDL"]
 	path = LDL
 	url = git@github.com:NVDLI/LDL.git
+[submodule "deep-learning-models"]
+	path = deep-learning-models
+	url = https://github.com/paperd/deep-learning-models
