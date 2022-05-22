@@ -1,9 +1,8 @@
-jupyterlab
-jupyter-contrib-nbextensions
-ipywidgets
-# matplotlib
-numpy
-pandas
-tensorflow
-tensorflow-datasets
+# numpy
+# pandas
 # tensorflow-data-validation
+jupyter==1.0.0
+matplotlib==3.5.2
+tensorflow==2.9.0
+tensorflow-datasets==4.5.2
+scipy==1.8.1
