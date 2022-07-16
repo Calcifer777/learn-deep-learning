@@ -1,49 +1,36 @@
-name: "CI Docs"
+name: deploy-docs
 
 on:
   push:
-    branches:
-    - main
-    paths:
-    - 'docs/**'
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  release:
-    name: Build
+  publish:
     runs-on: ubuntu-latest
     steps:
-    # This action checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        persist-credentials: false
-        fetch-depth: 0
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
-    - name: Build docs
-      run: |
-        export PATH=$PATH:~/.local/bin
-        cd docs
-        pip install --upgrade pip
-        pip install -r requirements.txt
-        make html
-    - name: Deploy
-      run : |
-        # Copy contents
-        mkdir gh-pages
-        cp -r ./docs/build/html/. gh-pages
-        # Create gh-pages branch
-        cd gh-pages
-        git init
-        git config --local user.email "m.filip@hotmail.it"
-        git config --local user.name "Calcifer777"
-        git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-        git checkout -b gh-pages
-        # Deploy
-        touch .nojekyll
-        git add .
-        git commit -m "Publish docs" || true
-        git push origin gh-pages --force
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Check out repo
+        uses: actions/checkout@v2
+      # Node is required for npm
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+      # Install and build Docusaurus website
+      - name: Build Docusaurus website
+        run: |
+          cd notes/website
+          npm install 
+          npm run build
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: /notes/website/build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
