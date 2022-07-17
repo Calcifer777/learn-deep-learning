@@ -6,11 +6,15 @@ sidebar_position: 2
 
 Traditional graph feature enginneering
 
-## Importance-based features
+## Node level features
 
-Captre the importance of a node in a graph.
+Importance-based features
+- Capture the importance of a node in a graph.
+- Useful for predicting influential nodes (e.g. celebrity users in a social network)
 
-Useful for predicting influential nodes (e.g. celebrity users in a social network)
+Structure-based features
+- Capture topological properties of local neighborood around a node
+- Useful for predicting a particular role of a node in a graph (e.g. proteing functionality in a protein-protein interaction network)
 
 ### Node degree
 
@@ -62,12 +66,6 @@ c_v = \frac
   {\sum_{u \neq v}{\text{shortest path lengths between u and v}} }
 $$
 
-## Structure-based features
-
-Capture topological properties of local neighborood around a node
-
-Useful for predicting a particular role of a node in a graph (e.g. proteing functionality in a protein-protein interaction network)
-
 ### Clustering coefficient
 
 Measures how connected $v$'s neighboring nodes are.
@@ -83,7 +81,7 @@ $$
 
 Where $k_v \choose 2$ is the number of node pairs among neighboring nodes. 
 
-That is, how many node pairs (potential edges) exists in the node nieghbors
+That is, how many node pairs (potential edges) exists in the node neighbors
 
 ### Graphlets
 
@@ -94,3 +92,89 @@ Provides a more detailed measure of local topological similarity than node degre
 [Graphlet](https://www.researchgate.net/publication/230827174/figure/fig2/AS:300409710235649@1448634664356/All-2-to-5-node-graphlets-They-contain-73-topologically-unique-node-orbits-In-a.png): rooted connected non-isomorphic subgraph
 
 Graphlet degree vector: counts the number of times a give graphlet apprears rooted at a given node
+
+## Link-based features
+
+Goal: predict new links based on existing links.
+
+Types of links prediction:
+- Predict the links that are missing from a graph (no time dimension)
+- Give a snapshot of a graph at time $t$, predict the evolution of the graph in terms of links predicted to appear/disappear at time $t+1$
+
+### Distance-based
+
+- Shortest-path distance between two nodes
+
+### Local neighborood overlap
+
+- Common neighbors: given two nodes, the size of the set of neighbors common to both nodes
+- Jaccard's coefficient: normalizes the common neighbors feature by the size of the union of the neighbors of two nodes
+- Adamic-Adar index: given two nodes - $v_1$, $v_2$ - sum the number of common neighbors, with each neighbor is weighted by the inverse of its (log) degree. Intuition: common neighbors with low degree weigh more
+$$
+\sum_{u \in N(v_1) \cap N(v_2)}
+{
+  \frac{1}{log{k_u}}
+}
+$$
+
+### Global neighborood overlap
+
+#### Kats index
+
+The Kats index - $S_{v1, v2}$ - count the number of paths of all lengths between a given pair of nodes
+
+The number of paths between two nodes $P_{uv}^{K}$ can be computed by taking the power of the adjacency matrix: $P_{uv}^{K} = A^{k}$
+
+$$
+S_{v1, v2} = 
+\sum_{l>1}{\beta^l A^{l}_{v1,v2}} = 
+(I - \beta A)^{-1} - I
+$$
+
+## Graph-level features
+
+Goal: features that characterize the structure of the entire graph
+
+### Kernel methods
+
+A kernel matrix - $K$:
+- measures similarity between two graphs
+- must always be positive semidefinite (i.e. with positive eigenvals)
+- There exists a feature representation - $\phi(\cdot)$ such that $K(G, G') = \phi(G)^T \phi(G')
+- once is defined, can be used with off-the-shelf ML models, to make predictions
+
+#### Graphlet kernel
+
+Bag-of-* approach based on the number of different graphlets in a graph.
+
+Difference with respect to node-base graphlets:
+- do not need to be connected
+- are not rooted
+
+For a given graph, the number of unique graphlets - $f_G$ - is normalized by the number of total graphlets in that graphs $h_G = \frac{f_{G}}{\sum{f_G}}$
+
+The kernel similarity is then defined as $K(G, G') = h_G^T h_{G'}$
+
+:::danger
+Counting graphlets of size $k$ is of order $O(n^k)$!
+:::
+
+#### Weisfeiler-Lehman kernel
+
+A efficient approach to define the kernel of a graph based on the Weisfeiler-Lehman (*color refinement*) algorithm.
+
+Color-refinement algorithm: given a graph $G$ with a set of nodes $V$:
+- assign an initial color $c^{0}(v)$ to each node $v$
+- iteratively refine node colors by:
+$$
+c^{k+1}(v) = Hash \left( 
+  \{ c^k(v), c^k(u)\}_{u \in N(v)}
+\right)
+$$
+- After $K$ steps of color refinement, $c^K(v)$ summarizes the structure of the graph at the level of the $K$-hop neighborood.
+
+After color refinement, WL kernel counts the number of nodes with a given color.
+
+The WL algorithm is linear both in the number of nodes and in the number of edges.
+ 
+
