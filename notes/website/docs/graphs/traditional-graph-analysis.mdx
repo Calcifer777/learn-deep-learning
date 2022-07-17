@@ -1,0 +1,96 @@
+---
+sidebar_position: 2
+---
+
+# Traditional Graph Analysis
+
+Traditional graph feature enginneering
+
+## Importance-based features
+
+Captre the importance of a node in a graph.
+
+Useful for predicting influential nodes (e.g. celebrity users in a social network)
+
+### Node degree
+
+For a given node, counts the number of neighboring nodes 
+
+### Node centrality
+
+Captures information on the position of the node in the network
+
+#### Eigenvector centrality
+
+A node $v$ is important if surrounded by important
+neighboring nodes $u \in N(v)$.
+$$
+c_v = \frac{1}{\lambda}\sum_{u \in N(v)}{c_u}
+\leftrightarrow
+\lambda c = A c
+$$
+
+where:
+- $c$: centrality vector
+- $A$: adjacency matrix
+- $\lambda$: some constant
+
+The largest eigenvalue $\lambda_{max}$ is always positive and unique
+(Perron-Frobenius theorem)
+
+The leading eigenvector $c_{max}$ is used for centrality.
+
+#### Betweenness centrality
+
+A node $v$ is important if it lies on many shortest paths between other nodes.
+
+$$
+c_v = \sum_{s \neq v \neq t}
+{\frac
+  {\text{\# shortest paths between s and t that contain v}}
+  {\text{\# shortest paths between s and t}}
+}
+$$
+
+#### Closeness centrality
+
+A node $v$ is important if it has a small shortest path lengths to all other nodes.
+
+$$
+c_v = \frac
+  {1}
+  {\sum_{u \neq v}{\text{shortest path lengths between u and v}} }
+$$
+
+## Structure-based features
+
+Capture topological properties of local neighborood around a node
+
+Useful for predicting a particular role of a node in a graph (e.g. proteing functionality in a protein-protein interaction network)
+
+### Clustering coefficient
+
+Measures how connected $v$'s neighboring nodes are.
+
+Counts the number of triangles in the ego-network of a node
+
+$$
+e_v = \frac
+  {\text{\#(edges among neighboring nodes)}}
+  {k_2 \choose 2}
+  \in [0, 1]
+$$
+
+Where $k_v \choose 2$ is the number of node pairs among neighboring nodes. 
+
+That is, how many node pairs (potential edges) exists in the node nieghbors
+
+### Graphlets
+
+Generalize the clustering coefficient by counting the number of pre-specified graphs (graphlets)
+
+Provides a more detailed measure of local topological similarity than node degrees or clustering coefficient.
+
+[Graphlet](https://www.researchgate.net/publication/230827174/figure/fig2/AS:300409710235649@1448634664356/All-2-to-5-node-graphlets-They-contain-73-topologically-unique-node-orbits-In-a.png): rooted connected non-isomorphic subgraph
+
+Graphlet degree vector: counts the number of times a give graphlet apprears rooted at a given node

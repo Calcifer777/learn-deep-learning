@@ -1,0 +1,53 @@
+---
+sidebar_position: 1
+---
+
+# Intro
+
+General concepts, terms, and applications
+
+## Graph Neural Networks characteristics
+
+- Arbitrary size and complex topological structure (i.e. no spatial locality like grids)
+- No fixed node ordering or reference point
+- Ofter dynamic and have multimodal features
+
+Representation learning: automatically extracting features in a graph. That is, mapping nodes to d-dimensional embeddings such that similar nodes in the network are embedded close together.
+
+## Tasks
+
+- Node classification: protein folding
+- Link prediction: recommender systems, drug side effects
+- Graph classification: molecule property prediction, traffic prediction
+- Clustering: social circle detection
+- Graph generation: drug discovery, molecule generation / optimization
+- Graph evolution: physical simulation
+
+## Terms
+
+Bipartite graph: graph whose nodes can be divided into two disjoint sets $U$ and $V$ such that every link connects a node in $U$ to one in $V$; that is $U$ and $V$ are independent sets.
+
+Folded/Projected bipartite graphs: given a bipartite graph, a (network) projection of that graph can be created by linking each node on one set with all others that share a link with the other set.
+
+## Graph representation
+
+- Adjacency matrix
+- List of edges
+- Adjacency list
+
+## Node and edge attributes
+
+- Weight
+- Ranind
+- Type
+- Sign
+- Other:
+  - properties depending on the structure of the rest of the graph (e.g. number of common friends)
+
+## Graph connectivity
+
+- The adjacency matrix of a network with several components can be written in a block-diagonal form
+
+### Strongly vs weakly connected graph
+  - Strongly connected: for every pair of nodes there is a path connecting them
+  - Weakly connected: the graph is connected is we disregard the edge directions
