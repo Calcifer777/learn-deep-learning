@@ -1,0 +1,83 @@
+---
+sidebar_position: 4
+sidebar_label: PageRank
+---
+
+# PageRank
+
+## Algorithm
+
+Main idea: the importance of a node $v$ is proportional to the importance of its neighbors.
+
+In particular, it is proportional to the importance of its neighbors with a out-link towards $v$.
+
+### Flow formulation
+
+$$
+r_{j} = \sum_{i \rightarrow j}{\frac{r_i}{d_i}}
+$$
+
+where $\frac{r_i}{d_i}$ is the importance of node $i$ normalized by its out-degree
+
+### Matrix formulation
+
+We can define a *stochastic adjacency matrix* $M \in \mathbb{R}^{|G| \times |G|}$, where each column $i$ contains to the out-links of node $i$ to all the other nodes in the graph. The non-zero elements of column $i$ are all $\frac{1}{d_i}$, with $d_i$ the out-degree of node $i$.
+
+We can also define a vector $r \in \mathbb{R}^{|G|}$ which encodes the importance of each node, and normalize its values so that $\sum{r} = 1$.
+
+Then, the flow equation can be re-written as:
+$$
+r = M r
+$$
+
+### Random walk formulation
+
+The algorithm can be also viewed as the result of applying an infinite uniform random walk from any node.
+
+The dynamic equation that describes the probability of the walker to be at a certain node at a given step is:
+$$
+p(t+1) = M p(t)
+$$
+
+It this sense, the importance vector $r$ in the matrix formulation can also be interpreted as the stationary distribution for the random walk.
+
+### Eigenvector formulation
+
+The matrix formulation can be rewritten as:
+$$
+1 \cdot r = M r
+$$
+
+So the rank vector $r$ is an eigenvector of the stochastic adjacency matrix $M$, corresponding to the eigenvalue with value $1$.
+
+## Solving PageRank
+
+Issues with the basic algorithm:
+- dead ends: cause importance to 'leak out'
+- spider traps: absorb all the importance
+
+Solution: allow the walker to teleport to a random node in the graph with probability $\beta$; in that case, the average importance of the destination node would be $\frac{1}{N}$, as the elements of $r$ sum to $1$.
+
+The complete algorithm in the flow formulation then becomes:
+$$
+r_j = (1-\beta)\sum_{j \rightarrow i}{\frac{r_i}{d_i}} + \beta \frac{1}{N}
+$$
+
+In the matrix formulation, the matrix used for the recursion becomes
+$$
+G = \beta M + (1 - \beta)\underset{N \times N \text{ matrix with all entries }\frac{1}{N}}{\left[ \frac{1}{N} \right]}
+$$
+
+## Variants
+
+### Personalized PageRank
+
+Modifies the original PageRank algorithm by allowing the node to teleport only to a subset of nodes in the graph.
+
+Can be used to rank the proximity of nodes in the graph with respoct to a subset of *query nodes*.
+
+### PageRank with restarts
+
+The set of possible nodes to which the walker can teleport is restricted to a single node.
+
+The set of query nodes effectively becomes a singleton.
