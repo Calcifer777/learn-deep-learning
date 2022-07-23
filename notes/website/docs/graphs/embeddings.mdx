@@ -1,0 +1,95 @@
+---
+sidebar_position: 3
+---
+
+# Embeddings
+
+Graph information encoding in vector embeddings
+
+## Node Embeddings
+
+Goal:
+- efficient task-independent feaure learning for ML with graphs
+- so that similarity of embeddings between nodes indicates their similarity in the network
+- and have embeddings encode network information
+
+Encoder-decoder approach
+- Encoder maps from nodes to embeddings
+- Decodes: maps from embeddings to the similarity score
+
+Shallow encoding: the encoder is just an embedding-lookup matrix $Z \in \mathbb{R}^{|V| \times |E|}$, with $V$ the set of nodes and $E$ the embedding space
+
+The decoder is based on the node similarity (e.g. dot product) 
+
+Not that scalable; up to the order of millions of nodes
+
+### DeepWalk
+
+Goal: make so that the similarity score between to embeddings $u$ and $v$ matches the probability that these two nodes co-occur on a random walk over the graph
+
+Why random walks:
+- flexible stochastic definition that encodes both local and higher-order neighborood information
+- computationally efficient 
+
+Given a node $u$, define its **neighborood** $N_R(u)$ as the set of nodes visited by a random walk started at $u$. This neighborood is computed by running **short fixed-length unbiased random walks** starting from $u$
+
+Given the embedding function $f: u \rightarrow \mathbb{R}^d$, the **log-Likelihood objective** is:
+$$
+\begin{align}
+\mathcal{L} &= - \sum_{u \in V}{\log{P(N_R(u) | z_u)}}  \\
+&= - \sum_{u \in V} \sum_{v \in N_R(u)}{\log{P(v | z_u)}}
+\end{align}
+$$
+where:
+- $z$ is the embedding vector
+- $P(\cdot)$ is the probability of a node being in the neighborood of $u$
+
+We can obtain a definition for $P$ from the similarity score by applying the **softmax** to the similarity score vector of $u$ with all the nodes in $V$.
+$$
+P(v,| z_u) = \frac{e^{u \cdot v}}{\sum_{l \in V}{e^{u \cdot l}}}
+$$
+
+Since obtaining the softmax on all the graph nodes is too computationally expensive, we can use **negative sampling** to select only a subset of negative nodes (i.e. not in the neighborood). The log likelihood then becomes:
+$$
+\begin{align}
+\log{ \mathcal{L}_{NS} } 
+&= \log{ \frac{e^{u \cdot v}}{\sum_{l \in V}{e^{u \cdot l}}} } \\
+&\approx \log{\sigma(u \cdot v)} - \sum_{i=1}^{k}{\log{\sigma(u \cdot k)}}
+\end{align}
+$$
+for some number $k$ of negative samples. 
+
+The negative nodes are sampled proportional to their degree:
+- higher $k$ gives more robust estimates
+- higher $k$ corresponds to igher bias on negative events
+so usually $5 \leq k \leq 20]$
+
+During training, SGD evaluates one small set of nodes at a time.
+
+### Node2Vec
+
+Improves Deepwalk by modifying the random walk function. 
+
+It uses flexible, biased random walks that can trade off between local and global views of the network. BFS is used to get a local view of the network; DFS for the global view of the network.
+
+The random walk behavior is parametrized by:
+- $p$: the return parameter
+- $q$: controls the ratio of BFS vs DFS exploration steps
+
+Algorithm:
+- compute the random walk probabilities
+- simulate $r$ random walks of length $l$ starting from each node $U$
+- optimize the nnode2vec objective using SGD
+
+Considerations:
+- linear-time comlpexity
+- all 3 steps of the algorithm are individually parallelizable
+- need to learn a separate embedding vector for every node in the graph
+
+## Graph embeddings
+
+Run a standard node embedding technique on the graph; then sum or average the embeddings.
+
+Introduce a *virtual node* to represent the (sub)graph and run a standard graph embedding technique
+
+Anonymous walk embeddings
