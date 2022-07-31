@@ -1,0 +1,180 @@
+---
+sidebar_position: 6
+sidebar_label: Graph Neural Networks
+---
+
+# Graph Neural Networks
+
+## Graph Convolutional networks
+
+Borrowing the idea from CNN, use each node neighbors as the kernel of the convolution. The network learns how to propagate information across the graph to compute node features.
+
+Every node defines a computation graph based on its neighborood.
+
+The model can be of arbitrary depth:
+- nodes have embeddings at each layer
+- Layer 0 embedding of node $u$ is its input feature $x_u$
+- Layer-k embedding gets information from nodes that are $K$ hops away. $K$ is a hyperparameter of the model (which should be based on the diameter of the network)
+
+### Neighborood aggregation
+
+As the graph has no natural ordering, the aggregation operator should be permutation invariant.
+
+- Layer $0$: 
+$$
+h_v^0 = x_v
+$$
+- Layer $l+1$:
+$$
+h_v^{l+1} = \sigma \left( 
+  W_l \sum_{u \in N(v)}{\frac{h_u^l}{\|N(v)\|}} +
+  B_l h_v^l
+  \right)   
+  , \forall l \in \{ 1, 2, \dots, L-1 \}
+$$
+
+with:
+- $h_v^l$: the hidden representation of node $v$ at layer $l$
+- $W_l$: weight matrix for neighborood aggregation
+- $B_l$: weight matrix for hidden vector of self (like ResNet?)
+
+:::info
+$W_k$ and $B_k$ are shared across the graph
+:::
+
+**Matrix formulation**
+
+Let:
+- $H^l = [h_1^l \dots h_{|N(v)|}^l]^T$
+- $A$ be the adjacency matrix
+
+then we can write:
+$$
+\sum_{u \in N(v)}{h_u^l} = A_{v, :} H^l
+$$
+
+Also, Let $D$ be a diagonal matrix with $D_{v,v} = Deg(v) = |N(v)|$
+
+Then: $\widetilde{A}^l = D^{-1} A H^l$ and so we have:
+$$
+H^{l+1} = \sigma \left( 
+  \widetilde{A}^l + H^l B_l^T
+  \right)
+$$
+
+The model can be used for predicting node labels for unseen nodes.
+
+## Graph Networks Components
+
+1. Message: each node computes a message from its neighbors
+$$
+m_u^l = {MSG}^l\left( h_u^{l-1} \right), u \in \{ N(v) \cup v \}
+$$
+2. Aggregation: aggregate messages from neighbors and its previous value
+$$
+h_v^l = {AGG}^l \left(\{ m_u^l : u \in N(v)\}, m_v^l \right)
+$$
+
+
+## Architectures
+
+### GCN
+
+1. Message: $MSG = \frac{1}{|N(v)|} W^l h_u^{l-1}$
+2. Aggregation: sum over messages from neighbors, then apply non-linearity
+
+### GraphSage
+
+Generalizes GCN by allowing for more complex aggregation operators. Two step aggregation with a generic permutation-invariant $AGG$ operator
+
+Aggregation: 
+1. Aggregate from node neighbors: 
+$h^l_{N(v)} ) = 
+  \text{AGG}\left(
+    \{ h_u^{l-1} : \forall u \in N(v) \}
+  \right)$
+2. Further aggregate over the node itself:
+$h_v^l = 
+  \sigma \left( W^l 
+    \text{CONCAT} (h_v^{l-1}, h_{N(v)}^l)
+  \right)$
+
+Candidate **aggregation functions**:
+- weighted average of neighbors (like GCN)
+- Pool: symmetric vector funtion (e.g. MEAN, MAX, SUM)
+- LSTM
+
+At each layer, apply L2 normalization to embeddings:
+$$
+h_v^l \leftarrow \frac{h_v^l}{{\| h_v^l \|}_2} \forall v \in V
+$$
+
+### Graph Attention Networks
+
+Allow to set different weights for each neighbor:
+$$
+h_v^l = \sigma \left( 
+  \sum_{u \in N(v)}{
+    \alpha_{vu} W^l h_u^{l-1}
+    }
+  \right)
+$$
+
+In GCN and SAGE $\alpha$ is independent from each node. That is: 
+$\alpha_{uv} = \frac{1}{|N(v)|}$
+
+#### Attention mechanism
+
+1. Compute the attention function for each pair of nodes $v,u$:
+$$
+e_{v,u} = a \left( 
+  W^l h^{l-1}_u, W^l h_v^{l-1}
+\right)
+$$
+2. Normalize the attention weights with softmax
+$$
+\alpha_{v,u} = \frac{\exp\{a_{v,u}\}}{\sum_{k \in N(v)}{\exp\{a_{v,k}\}}}
+$$
+3. Compute message aggregation based on the $\alpha_{u,v}$ coefficients
+
+**Multi-head attention**: create multiple attention scores; each replica has a different set of parameters. The goal is to stabilize the learning attention process. The layer output is aggregated by summation or concatenation.
+
+Note:
+- The parameters of $a$ are trained jointly with the other parameters of the network
+- Attention scores can be asymmetric
+- The approach is agnostic to the choice of $a$
+- Computationally efficient
+- Storage efficient
+- Localized: only attend over local network neighboroods
+- Inductive capability
+    - it is a shared edge-wise mechanism
+    - it does not depend on the global graph structure
+
+## GNN layer components
+
+- Linear component
+- Batch normalization: stabilizes training
+- Dropout: prevents overfitting
+- Attention: controls the importance of a message
+- Skip connections
+- ...
+- Aggregation
+- Activation: ReLU, Sigmoid, Parametric ReLU
+
+
+## Stacing GNN Layers
+
+GNN suffer from **over-smoothing** when stacking multiple layers. That is, all node embeddings converge to the same value.
+
+:::caution
+Don't stack too many GNN layers, this may lead to over-smoothing. 
+
+Instead, study the network topology by:
+1. analyzing the necessary receptive field to solve the problem at hand
+2. Set the number of GNN layers to be a bit more than the receptive field
+:::
+
+To increase the expressive power of a GNN:
+- increase the layers of the ANN within the GNN layer
+- add layers that do not pass messages either before the GNN layers (e.g. for vision or text tasks) or after (e.g. for knowledge graphs of for graph classification)
+- Add skip connections between GNN layers $\rightarrow$ create mixture of models
