@@ -138,3 +138,12 @@ dmypy.json
 cython_debug/
 .python-version
 .vscode
+**/dataset/
+**/papers/
+
+# Data files and artifacts
+*.pt 
+*.csv
+**/raw/*
+*/processed
+/homewo
