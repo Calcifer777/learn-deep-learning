@@ -1,0 +1,18 @@
+---
+sidebar_position: 7
+sidebar_label: GNN Theory
+---
+
+# GNN Theory
+
+## Computational Graph
+
+GNN capture the local neighborood structure through the computational graph. 
+
+If the computational graph of two nodes is the same (and the nodes' features are the same), then the two nodes will have equal embedding vectors 
+
+GNN's node embeddings capture rooted subtree structures. 
+
+The most expressive GNN maps different rooted subtrees into different node embeddings. GNN can fully distringuish different subtree structures if every step of its neighborood aggregation is injective; that is, no information is lost when aggregating messages from one GNN layer to the next.
+
+

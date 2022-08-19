@@ -1,0 +1,98 @@
+---
+sidebar_position: 5
+sidebar_label: The GNN Design Space
+---
+
+# Graph Neural Networks Design Space
+
+## Graph Feature Augmentation
+
+### Input graph does not have node features
+
+|                    | Constant  | One-hot                   |
+| ------------------ | --------- | ------------------------- |
+| Expressive power   | Medium    | High                      |
+| Inductive learning | High      | None                      |
+| Computational Cost | Low       | High                      |
+| User cases         | Any graph | Small graph, no new nodes |
+
+Standard approaches:
+- assign constant values to nodes
+- assign unique ids to nodes
+
+### Features are hard to learn
+
+Examples:
+- cycle length
+- node degree
+- clustering coefficients
+- pagerank
+- centrality
+
+## Graph Structure Augmentation
+
+### Sparse Graphs
+
+**Adding virtual and edges**
+
+Examples:
+- instead of using the adjacency matrix $A$ use $A^2$
+
+Use cases:
+- bipartite graphs
+    - authors-to-papers: 2-hop virtual edges make an author-author collaboration graph
+
+**Add virtual node**
+
+The virtual node is connected to all the other nodes in the graph.
+
+It greatly improves message passing in sparse graphs
+
+### Large and Dense Graphs
+
+**Sample a node's neighborood for message passing**
+- Sample $n$ nodes, with some heuristic (e.g. by node importance)
+- Sampling changes at each layer in a GNN component
+- In expectations, we get embeddings similar to the case where all the neighbors are used
+
+## Prediction Heads
+
+### Node-level predictions
+
+### Edge-level predictions
+
+**Concatenate the embeddings** of two nodes and pass them through a linear layers
+
+**Dot product between the embeddings**
+
+For scalar outputs (e.g. link prediction) use $h_u \cdot h_v$
+
+For k-way outputs (e.g. link type) use $y_i = h_u W^i h_v$ where $W^i$ - $i \in \{0, 1, \dots, k\}$ - is a class specific coefficient matrix. Then $\hat{y} = [y_1, y_2, \dots, y_k]$
+
+### Graph-level predictions
+
+
+**Global pooling**
+
+Types:
+- global mean pooling
+- global max pooling
+- global min pooling
+
+Issues:
+- loses information with large graphs
+
+**Hierarchical pooling**
+
+
+## Graph datasets - Train-Test split
+
+**Transductive setting**: training / validation / test sets are on the same graph
+- the dataset consists of one graph
+- the entire graph cn be observed in all dataset splits, we only split the labels
+- only applicable to node / edge prediction tasks
+
+**Inductive setting**: training / validation / test sets are on different graphs
+- the dataset consists of multiple graphs. Randomly creates the splits, then cut the edges connecting nodes belonging to different splits
+- each split can only observe the graph(s) within the split. A successful model should generalize to unseen graphs
+- applicable to node / edge / graph tasks
