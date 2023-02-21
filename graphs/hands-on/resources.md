@@ -1,0 +1,5 @@
+- Home page: https://pytorch-geometric.readthedocs.io/en/latest/notes/introduction.html
+- Nvidia course: https://courses.nvidia.com/courses/course-v1:DLI+S-FX-05+V1/
+- MLabonne: https://github.com/mlabonne/graph-neural-network-course
+- https://www.graphneuralnets.com/p/basics-of-gnns
+- search for graph neural networks course
