@@ -1,6 +1,6 @@
 # Answers
 
-## Ex. 1
+## Question 1.1
 
 $v_a = (1-\beta)\frac{1}{3}(v_1 + v_2 + v_4)$ 
 
@@ -57,7 +57,18 @@ We get:
 - $c^{Felicity}$ can not be found, as the system has no solution
 - $c^{Glynnis} = \begin{bmatrix} 0.1, 0.1, 0.1, 0.2 \end{bmatrix}$
 
-# Question 1.4
+## Question 1.4
 
-The set of personalized PageRank vectors that can be computed are the set of vectors that can be written as a linear combination of $V$.
+The set of personalized PageRank vectors that can be computed are the set of vectors whose teleport set can be written as a linear combination of the teleport sets of $V$.
 
+## Question 2.1
+
+3 layers
+
+At the 3th hop:
+- left side: the computational graph for the red node has one leaf, node 7
+- right side: the computational graph for the red node branches to nodes, 4, 7, and 8
+
+## Question 2.2
+
+Limiting distribution: $\begin{bmatrix} 0.47, 0.47, 0.70, 0.23 \end{bmatrix}$
