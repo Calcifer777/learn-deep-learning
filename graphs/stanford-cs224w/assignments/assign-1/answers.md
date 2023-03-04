@@ -69,6 +69,34 @@ At the 3th hop:
 - left side: the computational graph for the red node has one leaf, node 7
 - right side: the computational graph for the red node branches to nodes, 4, 7, and 8
 
-## Question 2.2
+## 2.2
 
 Limiting distribution: $\begin{bmatrix} 0.47, 0.47, 0.70, 0.23 \end{bmatrix}$
+
+## 2.3
+
+The transition matrix is: $M = D^{-1/2} A D^{-1/2}$
+
+## 2.4
+
+The transition matrix is: $M = \frac{1}{2}M + \frac{1}{2}\left[D^{-1/2} A D^{-1/2}\right]$
+
+## 2.5
+
+Let the initial node values be $h^{0}$; the node embeddings will converge to $h^{l} = h^{0}*power(M, l)$
+
+## 2.6
+
+Message function: $f(v) = v$
+Aggregation function:  $f({v: v \in N(u) \bigcup {u}}) = max(v)$
+
+## 4.1
+
+One isomorphism is: {1: 8, 2: 1, 3: 5, 4: 4, 5: 7, 6: 2, 7: 6, 8: 3}
+
+## 4.2
+
+- $h_u : u \in N(v_1) = {1, 1, 1}$
+- $h_u : u \in N(v_2) = {1, 1}$
+
+## 4.3

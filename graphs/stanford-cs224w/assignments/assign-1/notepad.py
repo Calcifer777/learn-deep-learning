@@ -28,7 +28,6 @@ A = np.array([
 
 D = np.diag([2, 2, 3, 1])
 D_inv = np.linalg.matrix_power(D, -1)
-# %%
 M =  (D_inv @ A)
 
 # %%
@@ -48,10 +47,67 @@ plt.legend(["1", "2", "3", "4"])
 print(f"Limiting distribution: {vectors[-1]}")
 
 # %%
-eig_val, eig_vec_l, eig_vec_r = eig(M, left=True)
+def get_unit_eigvec(m):
+  eig_val, eig_vec_l, eig_vec_r = eig(M, left=True)
 
-unit_eig_val_idx = np.abs(eig_val - 1) <= 1e-5
-unit_eig_vec = eig_vec_l[:, unit_eig_val_idx].flatten()
-print(f"Unit eigenvecor: {unit_eig_vec}")
+  unit_eig_val_idx = np.abs(eig_val - 1) <= 1e-5
+  unit_eig_vec = eig_vec_l[:, unit_eig_val_idx].flatten()
+  return unit_eig_vec
+
+# %%
+print(f"{get_unit_eigvec(M)=}")
+
+# %%
+
+D_inv_half = np.linalg.matrix_power(np.sqrt(D), -1)
+M = D_inv_half @ A @ D_inv_half
+# %%
+print(f"{get_unit_eigvec(M)=}")
+
+# %%
+l1 = [
+  (1, 5),
+  (1, 6),
+  (1, 7),
+  (2, 5),
+  (2, 6),
+  (2, 8),
+  (3, 5),
+  (3, 7),
+  (3, 8),
+  (4, 6),
+  (4, 7),
+  (4, 8),
+]
+G1 = nx.from_edgelist(l1)
+
+l2 = [
+  (1, 2),
+  (1, 3),
+  (1, 7),
+  (4, 2),
+  (4, 3),
+  (4, 6),
+  (5, 3),
+  (5, 6),
+  (5, 7),
+  (8, 2),
+  (8, 6),
+  (8, 7),
+]
+G2 = nx.from_edgelist(l2)
+# %%
+
+nx.algorithms.isomorphism.is_isomorphic(G1, G2)
+# %%
+from networkx.algorithms.isomorphism import GraphMatcher
+
+# %%
+GM = GraphMatcher(G1, G2)
+
+# %%
+list(GM.candidate_pairs_iter())
+# %%
+list(GM.match())
 
 # %%
