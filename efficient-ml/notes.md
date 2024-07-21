@@ -104,9 +104,67 @@ For convolutional layers:
 
 ### Quantization
 
+#### Data Types
+
+| Data Type  | Exponent (bits) | Fraction (bits) | Total (bits) |
+| ---------- | --------------- | --------------- | ------------ |
+| FP32       | 8               | 23              | 32           |
+| FP16       | 5               | 10              | 16           |
+| BF16       | 8               | 7               | 16           |
+| FP8 (E4M3) | 4               | 3               | 8            |
+| FP8 (E5M2) | 5               | 2               | 8            |
+
+Exponent bits are important for (dynamic) **range**, and dynamic range is
+important for training.
+
+Fraction bits affect the representation **precision**
+
+#### Quantization Approaches
+
+| Approaches                  | Storage                      | Computation     |
+| --------------------------- | ---------------------------- | --------------- |
+| Naive                       | FP weights                   | FP arithmetic   |
+| K-means                     | INT weights, FP codebook     | FP arithmetic   |
+| K-means w/ Huffman Encoding | Codebook uses Huff. Enc.     |                 |
+| Linear                      | INT weights, linearly spaced | INT arithmetics |
+| Binary / Ternary            |                              |                 |
+
+Linear quantization is an affine mapping of integers to real numbers:
+$w_{fp} = scale_{fp}(quant_{int}-offset_{int})$
+
+#### Post-Training Quantization (PTQ)
+
+**Zero Point**
+
+- Asymmetric
+- Symmetric
+
+**Quantization Granularity**
+
+- Per-Tensor
+- Per-Channel
+- Group Quantization
+
+**Dynamic Range Clipping**
+
+- Exponential moving average
+- Minimizing KL divergence
+- Minimizing MSE
+
+**Rounding**
+
+- Round to nearest
+- AdaRound
+
+#### Quantization-Aware Training (QAT)
+
 #### Resources
 
 - [Torch Dynamic Quantization Tutorial](https://pytorch.org/tutorials/advanced/dynamic_quantization_tutorial.html)
+
+**Papers**
+
+- [Deep Compression](https://arxiv.org/abs/1510.00149)
 
 ### Neural Architecture search
 
