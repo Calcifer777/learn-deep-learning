@@ -51,11 +51,9 @@ Time:
 
 Greater filter sizes increase the number of parameters, but reduce the
 
-## Efficient Inference
+## Pruning and Sparsity
 
-### Pruning and Sparsity
-
-#### Granularities
+### Granularities
 
 For convolutional layers:
 
@@ -65,7 +63,7 @@ For convolutional layers:
 - kernel-level
 - channel-level
 
-#### Criteria
+### Criteria
 
 - Magnitude ($L1$ / $L2$ / $L_p$)
 - Scaling
@@ -74,13 +72,13 @@ For convolutional layers:
 - Regression-based: minimize reconstruction error of the corresponding layer's
   output
 
-#### How to choose the pruning ratio
+### How to choose the pruning ratio
 
 - Analyze the sensitivity of pruning each layer to the model accuracy
 - NetAdapt: iteratively find the per-layer pruning ratio to meet a global
   resource constraing (e.g. latency, energy, ...)
 
-#### Finetuning pruned models
+### Finetuning pruned models
 
 - Learning rate is 10%-1% of the origiral learning rate
 - When doing iterative pruning
@@ -89,7 +87,7 @@ For convolutional layers:
     smaller parameters
 - Iterative magnitude pruning (lottery ticket hypothesis)
 
-#### Resources
+### Resources
 
 **Tutorials**
 
@@ -102,9 +100,9 @@ For convolutional layers:
 - [MIT AMC](https://github.com/mit-han-lab/amc)
 - [Torch Pruning](https://github.com/VainF/Torch-Pruning)
 
-### Quantization
+## Quantization
 
-#### Data Types
+### Data Types
 
 | Data Type  | Exponent (bits) | Fraction (bits) | Total (bits) |
 | ---------- | --------------- | --------------- | ------------ |
@@ -119,7 +117,7 @@ important for training.
 
 Fraction bits affect the representation **precision**
 
-#### Quantization Approaches
+### Quantization Approaches
 
 | Approaches                  | Storage                      | Computation     |
 | --------------------------- | ---------------------------- | --------------- |
@@ -132,7 +130,7 @@ Fraction bits affect the representation **precision**
 Linear quantization is an affine mapping of integers to real numbers:
 $w_{fp} = scale_{fp}(quant_{int}-offset_{int})$
 
-#### Post-Training Quantization (PTQ)
+### Post-Training Quantization (PTQ)
 
 **Zero Point**
 
@@ -156,9 +154,9 @@ $w_{fp} = scale_{fp}(quant_{int}-offset_{int})$
 - Round to nearest
 - AdaRound
 
-#### Quantization-Aware Training (QAT)
+### Quantization-Aware Training (QAT)
 
-#### Resources
+### Resources
 
 - [Torch Dynamic Quantization Tutorial](https://pytorch.org/tutorials/advanced/dynamic_quantization_tutorial.html)
 
@@ -166,6 +164,67 @@ $w_{fp} = scale_{fp}(quant_{int}-offset_{int})$
 
 - [Deep Compression](https://arxiv.org/abs/1510.00149)
 
-### Neural Architecture search
+## Neural Architecture search
 
-### Knowledge Distillation
+### Layers
+
+- Depthwise-convolution
+  - extreme case of group convolution where the group number equals the number
+    of input channels
+  - captures spatial information
+- 1x1 Convolution
+  - fuse/exchange information across channels
+
+### Blocks
+
+- Inverted bottleneck (MobileNetV2)
+  - expands the number of channels
+  - improves capacity of depthwise convolution
+  - allows depthwise conv. for parameter reduction, but
+    increases peak activation
+- 1x1 group convolution & channel shuffle (ShuffleNet)
+  - higher cost reduction than inverted bottleneck
+  - exchange info across groups via channel shuffle
+- Multi-Head (Self) Attention
+
+### NAS
+
+![nas-diagram](./docs-assets/nas.png)
+
+Search space
+
+- cell-level
+  - input: previous and previous-previous layer output
+  - transformation (conv2D, maxpool)
+  - combine method (add, multiply)
+- network-level:
+  - depth
+  - resolution
+  - kernel size
+  - width
+
+Search Strategy
+
+- grid search
+- random search
+- reinforcement learning
+- gradient descent
+- evolutionary search
+
+Performance estimation strategy
+
+- Train from scratch
+  - prohibitive training cost
+- Inherit weight (Net2Net)
+  - inherit weights from a parent model to reduce the training cost
+    instead of training from scratch
+  - Generate network transformation actions to update the model
+    architecture instead of directly generating the model architecture
+- Hypernetwork (SMASH)
+  - At each training step, a random model architecture is sampled from
+    the search space
+  - The hyper-network generated weights based on the model architecturee
+  - Use gradient descent to update the weights of the hyper-network
+- Zero-shot NAS (ZenNAS, GradSign)
+
+## Knowledge Distillation
